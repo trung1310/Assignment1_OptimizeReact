@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ImageMinPlugin = require('imagemin-webpack');
 
 module.exports = {
     entry: './src/index.js',
@@ -20,15 +21,58 @@ module.exports = {
                 loader: 'babel-loader'
             },
             {
-                test: /\.(jpeg|png|jpg|svg|gif)$/i,
-                loader: 'file-loader',
-                options: {
-                    name: '[name].[hash:6].[ext]',
-                    outputPath: 'images',
-                    publicPath: 'images',
-                    emitFile: true,
-                    esModule: false
-                }
+                test: /\.(svg|gif)$/i,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[hash:6].[ext]',
+                            outputPath: 'images',
+                            publicPath: 'images',
+                            emitFile: true,
+                            esModule: false
+                        }
+                    },
+                    {
+                        loader: ImageMinPlugin.loader, 
+                        options:{
+                            bail: false,
+                            cache: false,
+                            imageminOptions: {
+                                plugins: [
+                                    ["gifsicle", { interlaced: true }],
+                                    ["svgo", {
+                                        plugins: [
+                                            {removeViewBox: false}
+                                        ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        }
+                    }
+                ] 
+            },
+            {
+                test: /\.(jpeg|png|jpg)$/i,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[hash:6].[ext]',
+                            outputPath: 'images',
+                            publicPath: 'images',
+                            emitFile: true,
+                            esModule: false
+                        }
+                    },
+                    {
+                        loader: 'webp-loader',
+                        options:{
+                            quality: 13
+                        }
+                    }
+                ]
             }
         ]
     },

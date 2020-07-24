@@ -1,7 +1,7 @@
 import React from 'react';
 import reactDOM from 'react-dom';
 import './style.css'
-import Nature from './images/nature.jpg';
+import Nature from './images/image-human-brain_99433-298.jpg';
 
 const App = () => {
     return (
